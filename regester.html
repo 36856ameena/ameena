@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - BloodConnect</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <h1>BloodConnect</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="register.html" class="active">Register</a></li>
+      <li><a href="view.html">View Donors</a></li>
+    </ul>
+  </nav>
+
+  <section class="form-section">
+    <h2>Register as Donor or Receiver</h2>
+    <form id="registerForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="number" id="age" placeholder="Age" required />
+      <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required />
+      <input type="text" id="city" placeholder="City" required />
+      <input type="text" id="contact" placeholder="Contact Number" required />
+      <select id="role" required>
+        <option value="">Select Role</option>
+        <option value="Donor">Donor</option>
+        <option value="Receiver">Receiver</option>
+      </select>
+      <button type="submit" class="btn">Submit</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 BloodConnect</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
