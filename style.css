@@ -1,3 +1,4 @@
+/* Global Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -6,8 +7,9 @@ body {
   color: #222;
 }
 
+/* Header */
 header {
-  background: #800000;
+  background: rgba(128, 0, 0, 0.9); /* Slight transparency */
   color: white;
   padding: 1rem 0;
   text-align: center;
@@ -15,8 +17,9 @@ header {
   letter-spacing: 1px;
 }
 
+/* Navigation */
 nav {
-  background: #a30000;
+  background: rgba(163, 0, 0, 0.9);
   padding: 10px;
   text-align: center;
 }
@@ -33,23 +36,27 @@ nav a.active {
   text-decoration: underline;
 }
 
-main {
+/* Main content */
+main, .view-section {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   min-height: 70vh;
+  padding: 20px;
 }
 
+/* Form Styles */
 form {
   max-width: 400px;
   width: 90%;
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.85); /* Slightly transparent */
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Inputs and Buttons */
 input, select, button {
   width: 100%;
   padding: 10px;
@@ -71,13 +78,7 @@ button:hover {
   background: #800000;
 }
 
-footer {
-  text-align: center;
-  background: #a30000;
-  color: white;
-  padding: 10px 0;
-}
-
+/* Donor Cards */
 .card-container {
   display: flex;
   flex-wrap: wrap;
@@ -87,9 +88,18 @@ footer {
 }
 
 .card {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.85); /* Slightly transparent */
   padding: 15px;
   border-radius: 10px;
-  width: 200px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  width: 250px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  background: rgba(163, 0, 0, 0.9);
+  color: white;
+  padding: 10px 0;
 }
