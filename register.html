@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - BloodConnect</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
@@ -21,11 +21,11 @@
     <section class="form-section">
       <h2>Register as Donor or Receiver</h2>
       <form id="registerForm">
-        <input type="text" id="name" placeholder="Full Name" required />
-        <input type="number" id="age" placeholder="Age" required />
-        <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required />
-        <input type="text" id="city" placeholder="City" required />
-        <input type="text" id="contact" placeholder="Contact Number" required />
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="number" id="age" placeholder="Age" required>
+        <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required>
+        <input type="text" id="city" placeholder="City" required>
+        <input type="text" id="contact" placeholder="Contact Number" required>
         <select id="role" required>
           <option value="">Select Role</option>
           <option value="Donor">Donor</option>
@@ -41,13 +41,29 @@
     <p>© 2025 BloodConnect</p>
   </footer>
 
-  <script>
-    const form = document.getElementById("registerForm");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
 
-    form.addEventListener("submit", (e) => {
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
+      authDomain: "vac-ass.firebaseapp.com",
+      projectId: "vac-ass",
+      storageBucket: "vac-ass.firebasestorage.app",
+      messagingSenderId: "161511658313",
+      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
+      measurementId: "G-QSG2BEQN6J"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("registerForm");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // Get form values properly
       const donor = {
         name: document.getElementById("name").value,
         age: document.getElementById("age").value,
@@ -55,15 +71,17 @@
         city: document.getElementById("city").value,
         contact: document.getElementById("contact").value,
         role: document.getElementById("role").value,
+        timestamp: serverTimestamp()
       };
 
-      // Get existing data or empty array
-      const donors = JSON.parse(localStorage.getItem("donors") || "[]");
-      donors.push(donor);
-      localStorage.setItem("donors", JSON.stringify(donors));
-
-      document.getElementById("message").textContent = "Registered successfully!";
-      form.reset();
+      try {
+        await addDoc(collection(db, "users"), donor);
+        document.getElementById("message").textContent = "Registered successfully!";
+        form.reset();
+      } catch(err) {
+        console.error(err);
+        document.getElementById("message").textContent = "Error saving data.";
+      }
     });
   </script>
 </body>
