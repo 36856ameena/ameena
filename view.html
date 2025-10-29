@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>View Donors & Receivers - BloodConnect</title>
+  <title>View Donors - BloodConnect</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -17,7 +17,7 @@
   </nav>
 
   <section class="view-section">
-    <h2>Available Donors & Receivers</h2>
+    <h2>Available Donors</h2>
     <input type="text" id="searchCity" placeholder="Search by City..." />
     <div id="dataContainer" class="card-container"></div>
   </section>
@@ -26,78 +26,47 @@
     <p>© 2025 BloodConnect</p>
   </footer>
 
-  <!-- Firebase CDN -->
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
+  <script type="module">
+    import { db } from './firebase.js';
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-      authDomain: "vac-ass.firebaseapp.com",
-      projectId: "vac-ass",
-      storageBucket: "vac-ass.firebasestorage.app",
-      messagingSenderId: "161511658313",
-      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-      measurementId: "G-QSG2BEQN6J"
-    };
+    const container = document.getElementById("dataContainer");
+    const search = document.getElementById("searchCity");
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    async function loadDonors(cityFilter = "") {
+      container.innerHTML = "";
 
-    const dataContainer = document.getElementById("dataContainer");
-    const searchCity = document.getElementById("searchCity");
-    let allData = [];
-
-    // Function to display data
-    function displayData(list) {
-      dataContainer.innerHTML = "";
-      if (list.length === 0) {
-        dataContainer.innerHTML = "<p>No data found.</p>";
-        return;
+      let q;
+      if(cityFilter) {
+        q = query(collection(db, "users"), where("role", "==", "Donor"), where("city", "==", cityFilter));
+      } else {
+        q = query(collection(db, "users"), where("role", "==", "Donor"));
       }
 
-      list.forEach(item => {
+      const snapshot = await getDocs(q);
+      if(snapshot.empty) {
+        container.innerHTML = "<p>No donors found.</p>";
+      }
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
         const card = document.createElement("div");
-        card.className = "card";
+        card.classList.add("card");
         card.innerHTML = `
-          <h3>${item.name}</h3>
-          <p>Role: ${item.role}</p>
-          <p>Blood Group: ${item.bloodGroup}</p>
-          <p>City: ${item.city}</p>
-          <p>Contact: ${item.contact}</p>
+          <h3>${data.name}</h3>
+          <p>Age: ${data.age}</p>
+          <p>Blood Group: ${data.bloodGroup}</p>
+          <p>City: ${data.city}</p>
+          <p>Contact: ${data.contact}</p>
         `;
-        dataContainer.appendChild(card);
+        container.appendChild(card);
       });
     }
 
-    // Fetch donors and receivers
-    async function fetchData() {
-      try {
-        const donorsSnap = await db.collection("donors").get();
-        const receiversSnap = await db.collection("receivers").get();
+    loadDonors();
 
-        const donors = donorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Donor" }));
-        const receivers = receiversSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Receiver" }));
-
-        allData = [...donors, ...receivers];
-        displayData(allData);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        dataContainer.innerHTML = "<p>Failed to load data.</p>";
-      }
-    }
-
-    // Initial load
-    fetchData();
-
-    // Search by city
-    searchCity.addEventListener("input", () => {
-      const filtered = allData.filter(item =>
-        item.city.toLowerCase().includes(searchCity.value.toLowerCase())
-      );
-      displayData(filtered);
+    search.addEventListener("input", (e) => {
+      loadDonors(e.target.value.trim());
     });
   </script>
 </body>
