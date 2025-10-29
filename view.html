@@ -1,69 +1,104 @@
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Donors & Receivers - BloodConnect</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <h1>BloodConnect</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="view.html" class="active">View Donors</a></li>
+    </ul>
+  </nav>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-    authDomain: "vac-ass.firebaseapp.com",
-    projectId: "vac-ass",
-    storageBucket: "vac-ass.firebasestorage.app",
-    messagingSenderId: "161511658313",
-    appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-    measurementId: "G-QSG2BEQN6J"
-  };
+  <section class="view-section">
+    <h2>Available Donors & Receivers</h2>
+    <input type="text" id="searchCity" placeholder="Search by City..." />
+    <div id="dataContainer" class="card-container"></div>
+  </section>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  <footer>
+    <p>© 2025 BloodConnect</p>
+  </footer>
 
-  const dataContainer = document.getElementById("dataContainer");
-  const searchCity = document.getElementById("searchCity");
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
 
-  // Function to display data
-  function displayData(list) {
-    dataContainer.innerHTML = "";
-    if (list.length === 0) {
-      dataContainer.innerHTML = "<p>No data found.</p>";
-      return;
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
+      authDomain: "vac-ass.firebaseapp.com",
+      projectId: "vac-ass",
+      storageBucket: "vac-ass.firebasestorage.app",
+      messagingSenderId: "161511658313",
+      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
+      measurementId: "G-QSG2BEQN6J"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const dataContainer = document.getElementById("dataContainer");
+    const searchCity = document.getElementById("searchCity");
+    let allData = [];
+
+    // Function to display data
+    function displayData(list) {
+      dataContainer.innerHTML = "";
+      if (list.length === 0) {
+        dataContainer.innerHTML = "<p>No data found.</p>";
+        return;
+      }
+
+      list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${item.name}</h3>
+          <p>Role: ${item.role}</p>
+          <p>Blood Group: ${item.bloodGroup}</p>
+          <p>City: ${item.city}</p>
+          <p>Contact: ${item.contact}</p>
+        `;
+        dataContainer.appendChild(card);
+      });
     }
 
-    list.forEach((item) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <h3>${item.name}</h3>
-        <p>Role: ${item.role}</p>
-        <p>Blood Group: ${item.bloodGroup}</p>
-        <p>City: ${item.city}</p>
-        <p>Contact: ${item.contact}</p>
-      `;
-      dataContainer.appendChild(card);
+    // Fetch donors and receivers
+    async function fetchData() {
+      try {
+        const donorsSnap = await db.collection("donors").get();
+        const receiversSnap = await db.collection("receivers").get();
+
+        const donors = donorsSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Donor" }));
+        const receivers = receiversSnap.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Receiver" }));
+
+        allData = [...donors, ...receivers];
+        displayData(allData);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        dataContainer.innerHTML = "<p>Failed to load data.</p>";
+      }
+    }
+
+    // Initial load
+    fetchData();
+
+    // Search by city
+    searchCity.addEventListener("input", () => {
+      const filtered = allData.filter(item =>
+        item.city.toLowerCase().includes(searchCity.value.toLowerCase())
+      );
+      displayData(filtered);
     });
-  }
-
-  // Fetch data from Firestore
-  async function fetchData() {
-    const donorsSnapshot = await getDocs(collection(db, "donors"));
-    const receiversSnapshot = await getDocs(collection(db, "receivers"));
-
-    const donors = donorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Donor" }));
-    const receivers = receiversSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Receiver" }));
-
-    return [...donors, ...receivers];
-  }
-
-  let allData = [];
-
-  // Initial load
-  fetchData().then(data => {
-    allData = data;
-    displayData(allData);
-  });
-
-  // Search by city
-  searchCity.addEventListener("input", () => {
-    const filtered = allData.filter(item =>
-      item.city.toLowerCase().includes(searchCity.value.toLowerCase())
-    );
-    displayData(filtered);
-  });
-</script>
+  </script>
+</body>
+</html>
