@@ -41,55 +41,34 @@
     <p>© 2025 BloodConnect</p>
   </footer>
 
-  <!-- Firebase CDN -->
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
+  <script type="module">
+    import { db } from './firebase.js';
+    import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-      authDomain: "vac-ass.firebaseapp.com",
-      projectId: "vac-ass",
-      storageBucket: "vac-ass.firebasestorage.app",
-      messagingSenderId: "161511658313",
-      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-      measurementId: "G-QSG2BEQN6J"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // Form submission
     const form = document.getElementById("registerForm");
-    const message = document.getElementById("message");
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const donor = {
+      const data = {
         name: document.getElementById("name").value,
         age: document.getElementById("age").value,
         bloodGroup: document.getElementById("bloodGroup").value,
         city: document.getElementById("city").value,
         contact: document.getElementById("contact").value,
-        role: document.getElementById("role").value,
-        timestamp: new Date()
+        role: document.getElementById("role").value
       };
 
       try {
-        // Save to Firestore
-        const collectionName = donor.role === "Donor" ? "donors" : "receivers";
-        await db.collection(collectionName).add(donor);
-
-        message.textContent = "Registered successfully!";
-        form.reset();
-      } catch (err) {
-        console.error(err);
-        message.textContent = "Failed to register. Try again.";
+        await addDoc(collection(db, "users"), data);
+        document.getElementById("message").textContent = "Registered successfully!";
+        e.target.reset();
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        document.getElementById("message").textContent = "Failed to register!";
       }
     });
   </script>
 </body>
 </html>
+
