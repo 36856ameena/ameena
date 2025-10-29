@@ -1,6 +1,6 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
@@ -15,66 +15,55 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  const container = document.getElementById("dataContainer");
+  const dataContainer = document.getElementById("dataContainer");
+  const searchCity = document.getElementById("searchCity");
 
-  async function loadData() {
-    container.innerHTML = "<p>Loading donors and receivers...</p>";
-
-    const donorsSnap = await getDocs(collection(db, "donors"));
-    const receiversSnap = await getDocs(collection(db, "receivers"));
-
-    container.innerHTML = `
-      <h3>🩸 Donors</h3>
-      <div id="donorsList" class="card-container"></div>
-      <h3>🩹 Receivers</h3>
-      <div id="receiversList" class="card-container"></div>
-    `;
-
-    const donorsList = document.getElementById("donorsList");
-    const receiversList = document.getElementById("receiversList");
-
-    donorsSnap.forEach(doc => {
-      const d = doc.data();
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.innerHTML = `
-        <h4>${d.name}</h4>
-        <p><strong>Blood Group:</strong> ${d.bloodGroup}</p>
-        <p><strong>City:</strong> ${d.city}</p>
-        <p><strong>Contact:</strong> ${d.contact}</p>
-      `;
-      donorsList.appendChild(card);
-    });
-
-    receiversSnap.forEach(doc => {
-      const r = doc.data();
-      const card = document.createElement("div");
-      card.classList.add("card");
-      card.innerHTML = `
-        <h4>${r.name}</h4>
-        <p><strong>Blood Group:</strong> ${r.bloodGroup}</p>
-        <p><strong>City:</strong> ${r.city}</p>
-        <p><strong>Contact:</strong> ${r.contact}</p>
-      `;
-      receiversList.appendChild(card);
-    });
-
-    if (donorsSnap.empty && receiversSnap.empty) {
-      container.innerHTML = "<p>No data found.</p>";
+  // Function to display data
+  function displayData(list) {
+    dataContainer.innerHTML = "";
+    if (list.length === 0) {
+      dataContainer.innerHTML = "<p>No data found.</p>";
+      return;
     }
-  }
 
-  loadData();
-
-  // Optional search filter
-  const searchInput = document.getElementById("searchCity");
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      const term = searchInput.value.toLowerCase();
-      document.querySelectorAll(".card").forEach(card => {
-        const city = card.querySelector("p:nth-child(3)")?.textContent.toLowerCase() || "";
-        card.style.display = city.includes(term) ? "block" : "none";
-      });
+    list.forEach((item) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h3>${item.name}</h3>
+        <p>Role: ${item.role}</p>
+        <p>Blood Group: ${item.bloodGroup}</p>
+        <p>City: ${item.city}</p>
+        <p>Contact: ${item.contact}</p>
+      `;
+      dataContainer.appendChild(card);
     });
   }
+
+  // Fetch data from Firestore
+  async function fetchData() {
+    const donorsSnapshot = await getDocs(collection(db, "donors"));
+    const receiversSnapshot = await getDocs(collection(db, "receivers"));
+
+    const donors = donorsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Donor" }));
+    const receivers = receiversSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), role: "Receiver" }));
+
+    return [...donors, ...receivers];
+  }
+
+  let allData = [];
+
+  // Initial load
+  fetchData().then(data => {
+    allData = data;
+    displayData(allData);
+  });
+
+  // Search by city
+  searchCity.addEventListener("input", () => {
+    const filtered = allData.filter(item =>
+      item.city.toLowerCase().includes(searchCity.value.toLowerCase())
+    );
+    displayData(filtered);
+  });
 </script>
