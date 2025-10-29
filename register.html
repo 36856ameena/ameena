@@ -7,36 +7,60 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <nav>
+  <header>
     <h1>BloodConnect</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="register.html" class="active">Register</a></li>
-      <li><a href="view.html">View Donors</a></li>
-    </ul>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="view.html">View Donors</a>
   </nav>
 
-  <section class="form-section">
-    <h2>Register as Donor or Receiver</h2>
-    <form id="registerForm">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="number" id="age" placeholder="Age" required />
-      <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required />
-      <input type="text" id="city" placeholder="City" required />
-      <input type="text" id="contact" placeholder="Contact Number" required />
-      <select id="role" required>
-        <option value="">Select Role</option>
-        <option value="Donor">Donor</option>
-        <option value="Receiver">Receiver</option>
-      </select>
-      <button type="submit" class="btn">Submit</button>
-    </form>
-  </section>
+  <main>
+    <section class="form-section">
+      <h2>Register as Donor or Receiver</h2>
+      <form id="registerForm">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="number" id="age" placeholder="Age" required />
+        <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required />
+        <input type="text" id="city" placeholder="City" required />
+        <input type="text" id="contact" placeholder="Contact Number" required />
+        <select id="role" required>
+          <option value="">Select Role</option>
+          <option value="Donor">Donor</option>
+          <option value="Receiver">Receiver</option>
+        </select>
+        <button type="submit">Submit</button>
+      </form>
+      <p id="message"></p>
+    </section>
+  </main>
 
   <footer>
     <p>© 2025 BloodConnect</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script>
+    // Simple local storage register logic
+    document.getElementById("registerForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const donor = {
+        name: name.value,
+        age: age.value,
+        bloodGroup: bloodGroup.value,
+        city: city.value,
+        contact: contact.value,
+        role: role.value,
+      };
+
+      const donors = JSON.parse(localStorage.getItem("donors") || "[]");
+      donors.push(donor);
+      localStorage.setItem("donors", JSON.stringify(donors));
+
+      document.getElementById("message").textContent = "Registered successfully!";
+      e.target.reset();
+    });
+  </script>
 </body>
 </html>
