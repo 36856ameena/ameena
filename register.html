@@ -1,52 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register - BloodConnect</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>BloodConnect</h1>
+  </header>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="view.html">View Donors</a>
+  </nav>
 
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-    authDomain: "vac-ass.firebaseapp.com",
-    projectId: "vac-ass",
-    storageBucket: "vac-ass.firebasestorage.app",
-    messagingSenderId: "161511658313",
-    appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-    measurementId: "G-QSG2BEQN6J"
-  };
+  <main>
+    <section class="form-section">
+      <h2>Register as Donor or Receiver</h2>
+      <form id="registerForm">
+        <input type="text" id="name" placeholder="Full Name" required />
+        <input type="number" id="age" placeholder="Age" required />
+        <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required />
+        <input type="text" id="city" placeholder="City" required />
+        <input type="text" id="contact" placeholder="Contact Number" required />
+        <select id="role" required>
+          <option value="">Select Role</option>
+          <option value="Donor">Donor</option>
+          <option value="Receiver">Receiver</option>
+        </select>
+        <button type="submit">Submit</button>
+      </form>
+      <p id="message"></p>
+    </section>
+  </main>
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  <footer>
+    <p>© 2025 BloodConnect</p>
+  </footer>
 
-  // Form submit handler
-  const form = document.getElementById("registerForm");
-  const message = document.getElementById("message");
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"></script>
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const donor = {
-      name: document.getElementById("name").value,
-      age: document.getElementById("age").value,
-      bloodGroup: document.getElementById("bloodGroup").value,
-      city: document.getElementById("city").value,
-      contact: document.getElementById("contact").value,
-      role: document.getElementById("role").value,
-      timestamp: new Date()
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
+      authDomain: "vac-ass.firebaseapp.com",
+      projectId: "vac-ass",
+      storageBucket: "vac-ass.firebasestorage.app",
+      messagingSenderId: "161511658313",
+      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
+      measurementId: "G-QSG2BEQN6J"
     };
 
-    try {
-      // Save to Firestore in different collections based on role
-      if (donor.role === "Donor") {
-        await addDoc(collection(db, "donors"), donor);
-      } else if (donor.role === "Receiver") {
-        await addDoc(collection(db, "receivers"), donor);
-      }
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-      message.textContent = "Registered successfully!";
-      form.reset();
-    } catch (error) {
-      console.error("Error saving data:", error);
-      message.textContent = "Failed to register. Try again.";
-    }
-  });
-</script>
+    // Form submission
+    const form = document.getElementById("registerForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const donor = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        bloodGroup: document.getElementById("bloodGroup").value,
+        city: document.getElementById("city").value,
+        contact: document.getElementById("contact").value,
+        role: document.getElementById("role").value,
+        timestamp: new Date()
+      };
+
+      try {
+        // Save to Firestore
+        const collectionName = donor.role === "Donor" ? "donors" : "receivers";
+        await db.collection(collectionName).add(donor);
+
+        message.textContent = "Registered successfully!";
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        message.textContent = "Failed to register. Try again.";
+      }
+    });
+  </script>
+</body>
+</html>
