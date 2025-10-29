@@ -41,34 +41,30 @@
     <p>© 2025 BloodConnect</p>
   </footer>
 
-  <script type="module">
-    import { db } from './firebase.js';
-    import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
+  <script>
     const form = document.getElementById("registerForm");
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const data = {
+      // Get form values properly
+      const donor = {
         name: document.getElementById("name").value,
         age: document.getElementById("age").value,
         bloodGroup: document.getElementById("bloodGroup").value,
         city: document.getElementById("city").value,
         contact: document.getElementById("contact").value,
-        role: document.getElementById("role").value
+        role: document.getElementById("role").value,
       };
 
-      try {
-        await addDoc(collection(db, "users"), data);
-        document.getElementById("message").textContent = "Registered successfully!";
-        e.target.reset();
-      } catch (error) {
-        console.error("Error adding document: ", error);
-        document.getElementById("message").textContent = "Failed to register!";
-      }
+      // Get existing data or empty array
+      const donors = JSON.parse(localStorage.getItem("donors") || "[]");
+      donors.push(donor);
+      localStorage.setItem("donors", JSON.stringify(donors));
+
+      document.getElementById("message").textContent = "Registered successfully!";
+      form.reset();
     });
   </script>
 </body>
 </html>
-
