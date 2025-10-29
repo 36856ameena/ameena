@@ -3,32 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Online Blood Donation System</title>
+  <title>BloodConnect - Home</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .hero {
+      background: url("blood-bg.jpg") no-repeat center center/cover;
+      color: white;
+      text-align: center;
+      padding: 140px 20px;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      margin-bottom: 30px;
+    }
+
+    .hero .btn {
+      background: #a30000;
+      color: white;
+      padding: 12px 25px;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+
+    .hero .btn:hover {
+      background: #800000;
+    }
+  </style>
 </head>
 <body>
-  <nav>
+  <header>
     <h1>BloodConnect</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="register.html">Register</a></li>
-      <li><a href="view.html">View Donors</a></li>
-    </ul>
+  </header>
+
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="register.html">Register</a>
+    <a href="view.html">View Donors</a>
   </nav>
 
   <section class="hero">
-    <div class="hero-text">
-      <h2>Donate Blood, Save Lives</h2>
-      <p>Your small act of kindness can give someone another chance to live.</p>
-      <div class="buttons">
-        <a href="register.html" class="btn">Register Now</a>
-        <a href="view.html" class="btn-outline">Find Donor</a>
-      </div>
-    </div>
+    <h1>Donate Blood, Save Lives</h1>
+    <p>Your small act of kindness can give someone another chance to live.</p>
+    <a href="register.html" class="btn">Register Now</a>
+    <a href="view.html" class="btn" style="background: transparent; border: 2px solid white;">Find Donor</a>
   </section>
 
   <footer>
-    <p>© 2025 BloodConnect | Made with ❤️</p>
+    <p>© 2025 BloodConnect</p>
   </footer>
 </body>
 </html>
