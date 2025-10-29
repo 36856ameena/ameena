@@ -26,38 +26,30 @@
     <p>© 2025 BloodConnect</p>
   </footer>
 
-  <script type="module">
-    import { db } from './firebase.js';
-    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
+  <script>
     const container = document.getElementById("dataContainer");
     const search = document.getElementById("searchCity");
 
-    async function loadDonors(cityFilter = "") {
+    function loadDonors(filterCity = "") {
+      const donors = JSON.parse(localStorage.getItem("donors") || "[]");
       container.innerHTML = "";
 
-      let q;
-      if(cityFilter) {
-        q = query(collection(db, "users"), where("role", "==", "Donor"), where("city", "==", cityFilter));
-      } else {
-        q = query(collection(db, "users"), where("role", "==", "Donor"));
-      }
+      const filtered = donors.filter(d => d.role === "Donor" && (!filterCity || d.city.toLowerCase().includes(filterCity.toLowerCase())));
 
-      const snapshot = await getDocs(q);
-      if(snapshot.empty) {
+      if(filtered.length === 0){
         container.innerHTML = "<p>No donors found.</p>";
+        return;
       }
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
+      filtered.forEach(d => {
         const card = document.createElement("div");
         card.classList.add("card");
         card.innerHTML = `
-          <h3>${data.name}</h3>
-          <p>Age: ${data.age}</p>
-          <p>Blood Group: ${data.bloodGroup}</p>
-          <p>City: ${data.city}</p>
-          <p>Contact: ${data.contact}</p>
+          <h3>${d.name}</h3>
+          <p>Age: ${d.age}</p>
+          <p>Blood Group: ${d.bloodGroup}</p>
+          <p>City: ${d.city}</p>
+          <p>Contact: ${d.contact}</p>
         `;
         container.appendChild(card);
       });
@@ -65,9 +57,7 @@
 
     loadDonors();
 
-    search.addEventListener("input", (e) => {
-      loadDonors(e.target.value.trim());
-    });
+    search.addEventListener("input", (e) => loadDonors(e.target.value));
   </script>
 </body>
 </html>
