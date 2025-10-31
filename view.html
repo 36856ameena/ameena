@@ -1,35 +1,86 @@
-async function loadDonors(filterCity = "") {
-  container.innerHTML = "";
-  try {
-    // no orderBy for now — index not needed
-    const q = query(collection(db, "users"), where("role", "==", "Donor"));
-    const snapshot = await getDocs(q);
-    const donors = snapshot.docs.map(doc => doc.data());
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Donors - BloodConnect</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <h1>BloodConnect</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li><a href="view.html" class="active">View Donors</a></li>
+    </ul>
+  </nav>
 
-    const filtered = donors.filter(d =>
-      !filterCity || d.city.toLowerCase().includes(filterCity.toLowerCase())
-    );
+  <section class="view-section">
+    <h2>Available Donors</h2>
+    <input type="text" id="searchCity" placeholder="Search by City..." />
+    <div id="dataContainer" class="card-container"></div>
+  </section>
 
-    if (filtered.length === 0) {
-      container.innerHTML = "<p>No donors found.</p>";
-      return;
+  <footer>
+    <p>© 2025 BloodConnect</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
+      authDomain: "vac-ass.firebaseapp.com",
+      projectId: "vac-ass",
+      storageBucket: "vac-ass.firebasestorage.app",
+      messagingSenderId: "161511658313",
+      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
+      measurementId: "G-QSG2BEQN6J"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const container = document.getElementById("dataContainer");
+    const search = document.getElementById("searchCity");
+
+    async function loadDonors(filterCity = "") {
+      container.innerHTML = "";
+      try {
+        const snapshot = await getDocs(collection(db, "users"));
+        const allData = snapshot.docs.map(doc => doc.data());
+        const donors = allData.filter(d => d.role === "Donor");
+        const filtered = donors.filter(d =>
+          !filterCity || (d.city && d.city.toLowerCase().includes(filterCity.toLowerCase()))
+        );
+
+        if (filtered.length === 0) {
+          container.innerHTML = "<p>No donors found.</p>";
+          return;
+        }
+
+        filtered.forEach(donor => {
+          const card = document.createElement("div");
+          card.classList.add("card");
+          card.innerHTML = `
+            <h3>${donor.name}</h3>
+            <p><b>Blood Group:</b> ${donor.bloodGroup}</p>
+            <p><b>Age:</b> ${donor.age}</p>
+            <p><b>City:</b> ${donor.city}</p>
+            <p><b>Contact:</b> ${donor.contact}</p>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p>Error loading donors.</p>";
+      }
     }
 
-    filtered.forEach(donor => {
-      const div = document.createElement("div");
-      div.classList.add("card");
-      div.innerHTML = `
-        <h3>${donor.name}</h3>
-        <p>Blood Group: ${donor.bloodGroup}</p>
-        <p>Age: ${donor.age}</p>
-        <p>City: ${donor.city}</p>
-        <p>Contact: ${donor.contact}</p>
-      `;
-      container.appendChild(div);
-    });
-
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = "<p>Error loading donors.</p>";
-  }
-}
+    search.addEventListener("input", () => loadDonors(search.value));
+    loadDonors();
+  </script>
+</body>
+</html>
