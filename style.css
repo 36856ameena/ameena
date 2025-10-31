@@ -1,62 +1,142 @@
-body {
-  font-family: 'Poppins', sans-serif;
-  background: #1b0000 url("blood-bg.jpg") no-repeat center center/cover;
-  color: #f5f5f5;
+/* ====== Global Reset ====== */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-header, nav, footer {
-  background-color: #8b0000;
-  color: #fff;
-  text-align: center;
-  padding: 1rem;
+/* ====== Body ====== */
+body {
+  background-color: #fff8f5; /* soft cream */
+  color: #2c2c2c;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-nav a {
+/* ====== Navbar ====== */
+nav {
+  background-color: #800000; /* maroon */
   color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+nav h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav ul li a {
   text-decoration: none;
-  margin: 0 12px;
-  font-weight: 500;
-}
-
-nav a:hover, nav a.active {
-  text-decoration: underline;
-}
-
-button {
-  background-color: #b30000;
-  border: none;
-  color: white;
-  padding: 10px 18px;
-  margin-top: 10px;
+  color: #fff;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
-  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+  background-color: #a83232;
+}
+
+/* ====== Section ====== */
+.view-section,
+.register-section,
+.home-section {
+  padding: 2rem;
+  text-align: center;
+  flex: 1;
+}
+
+h2 {
+  color: #800000;
+  margin-bottom: 1.5rem;
+}
+
+/* ====== Search Box ====== */
+#searchCity {
+  padding: 0.7rem 1rem;
+  border: 1px solid #800000;
+  border-radius: 8px;
+  width: 260px;
+  margin-bottom: 1.5rem;
+  outline: none;
   transition: 0.3s;
 }
 
-button:hover {
-  background-color: #ff0000;
+#searchCity:focus {
+  border-color: #a83232;
+  box-shadow: 0 0 5px #d46a6a;
 }
 
+/* ====== Donor Cards ====== */
 .card-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  padding: 30px;
+  gap: 1.5rem;
+  justify-content: center;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid #b30000;
+  background-color: #fff;
+  border: 1px solid #f0dede;
   border-radius: 12px;
-  padding: 20px;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s ease;
+  padding: 1.5rem;
+  text-align: left;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(128, 0, 0, 0.1);
 }
 
 .card:hover {
   transform: translateY(-5px);
-  border-color: #ff0000;
+  box-shadow: 0 4px 10px rgba(128, 0, 0, 0.2);
+}
+
+.card h3 {
+  color: #800000;
+  margin-bottom: 0.8rem;
+}
+
+.card p {
+  margin: 0.3rem 0;
+  color: #333;
+}
+
+/* ====== Buttons (for Register etc.) ====== */
+button,
+a.btn {
+  background-color: #800000;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.3rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover,
+a.btn:hover {
+  background-color: #a83232;
+}
+
+/* ====== Footer ====== */
+footer {
+  background-color: #800000;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
 }
