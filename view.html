@@ -1,90 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Donors - BloodConnect</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <nav>
-    <h1>BloodConnect</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="register.html">Register</a></li>
-      <li><a href="view.html" class="active">View Donors</a></li>
-    </ul>
-  </nav>
+async function loadDonors(filterCity = "") {
+  container.innerHTML = "";
+  try {
+    // no orderBy for now — index not needed
+    const q = query(collection(db, "users"), where("role", "==", "Donor"));
+    const snapshot = await getDocs(q);
+    const donors = snapshot.docs.map(doc => doc.data());
 
-  <section class="view-section">
-    <h2>Available Donors</h2>
-    <input type="text" id="searchCity" placeholder="Search by City...">
-    <div id="dataContainer" class="card-container"></div>
-  </section>
+    const filtered = donors.filter(d =>
+      !filterCity || d.city.toLowerCase().includes(filterCity.toLowerCase())
+    );
 
-  <footer>
-    <p>© 2025 BloodConnect</p>
-  </footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-      authDomain: "vac-ass.firebaseapp.com",
-      projectId: "vac-ass",
-      storageBucket: "vac-ass.firebasestorage.app",
-      messagingSenderId: "161511658313",
-      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-      measurementId: "G-QSG2BEQN6J"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-
-    const container = document.getElementById("dataContainer");
-    const search = document.getElementById("searchCity");
-
-    async function loadDonors(filterCity = "") {
-      container.innerHTML = "";
-      try {
-        const q = query(collection(db, "users"), where("role", "==", "Donor"), orderBy("timestamp", "desc"));
-        const snapshot = await getDocs(q);
-        const donors = snapshot.docs.map(doc => doc.data());
-
-        const filtered = donors.filter(d => !filterCity || d.city.toLowerCase().includes(filterCity.toLowerCase()));
-
-        if (filtered.length === 0) {
-          container.innerHTML = "<p>No donors found.</p>";
-          return;
-        }
-
-        filtered.forEach(donor => {
-          const div = document.createElement("div");
-          div.classList.add("card");
-          div.innerHTML = `
-            <h3>${donor.name}</h3>
-            <p>Blood Group: ${donor.bloodGroup}</p>
-            <p>Age: ${donor.age}</p>
-            <p>City: ${donor.city}</p>
-            <p>Contact: ${donor.contact}</p>
-          `;
-          container.appendChild(div);
-        });
-
-      } catch(err) {
-        console.error(err);
-        container.innerHTML = "<p>Error loading donors.</p>";
-      }
+    if (filtered.length === 0) {
+      container.innerHTML = "<p>No donors found.</p>";
+      return;
     }
 
-    search.addEventListener("input", () => loadDonors(search.value));
+    filtered.forEach(donor => {
+      const div = document.createElement("div");
+      div.classList.add("card");
+      div.innerHTML = `
+        <h3>${donor.name}</h3>
+        <p>Blood Group: ${donor.bloodGroup}</p>
+        <p>Age: ${donor.age}</p>
+        <p>City: ${donor.city}</p>
+        <p>Contact: ${donor.contact}</p>
+      `;
+      container.appendChild(div);
+    });
 
-    // Load all donors on page load
-    loadDonors();
-  </script>
-</body>
-</html>
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = "<p>Error loading donors.</p>";
+  }
+}
