@@ -8,7 +8,8 @@
 
 /* ====== Body ====== */
 body {
-  background-color: #fff8f5; /* soft cream */
+  background: url("blood-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
   color: #2c2c2c;
   min-height: 100vh;
   display: flex;
@@ -17,13 +18,13 @@ body {
 
 /* ====== Navbar ====== */
 nav {
-  background-color: #800000; /* maroon */
+  background-color: rgba(128, 0, 0, 0.9); /* maroon with slight transparency */
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 nav h1 {
@@ -39,7 +40,7 @@ nav ul {
 
 nav ul li a {
   text-decoration: none;
-  color: #fff;
+  color: #fff8f5;
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: all 0.3s ease;
@@ -47,7 +48,8 @@ nav ul li a {
 
 nav ul li a:hover,
 nav ul li a.active {
-  background-color: #a83232;
+  background-color: #fff8f5;
+  color: #800000;
 }
 
 /* ====== Section ====== */
@@ -57,7 +59,12 @@ nav ul li a.active {
   padding: 2rem;
   text-align: center;
   flex: 1;
-  background: linear-gradient(to bottom right, #fff8f5, #ffe8e8);
+  background-color: rgba(255, 248, 245, 0.85); /* soft cream overlay for readability */
+  border-radius: 12px;
+  margin: 2rem auto;
+  width: 90%;
+  max-width: 1000px;
+  box-shadow: 0 4px 10px rgba(128, 0, 0, 0.2);
 }
 
 h2 {
@@ -87,12 +94,10 @@ h2 {
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
   justify-content: center;
-  min-height: 200px; /* ensures visibility even if few donors */
-  padding: 1rem 0;
 }
 
 .card {
-  background-color: #fff;
+  background-color: #fff8f5;
   border: 1px solid #f0dede;
   border-radius: 12px;
   padding: 1.5rem;
@@ -116,11 +121,11 @@ h2 {
   color: #333;
 }
 
-/* ====== Buttons (for Register etc.) ====== */
+/* ====== Buttons ====== */
 button,
 a.btn {
   background-color: #800000;
-  color: #fff;
+  color: #fff8f5;
   border: none;
   padding: 0.7rem 1.3rem;
   border-radius: 8px;
@@ -132,15 +137,16 @@ a.btn {
 
 button:hover,
 a.btn:hover {
-  background-color: #a83232;
+  background-color: #fff8f5;
+  color: #800000;
+  border: 1px solid #800000;
 }
 
 /* ====== Footer ====== */
 footer {
-  background-color: #800000;
-  color: #fff;
+  background-color: rgba(128, 0, 0, 0.9);
+  color: #fff8f5;
   text-align: center;
   padding: 1rem 0;
   font-size: 0.9rem;
-  margin-top: auto;
 }
