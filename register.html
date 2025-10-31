@@ -75,7 +75,7 @@
       };
 
       try {
-        await addDoc(collection(db, "users"), donor);
+       await addDoc(collection(db, "donors"), donor);
         document.getElementById("message").textContent = "Registered successfully!";
         form.reset();
       } catch(err) {
