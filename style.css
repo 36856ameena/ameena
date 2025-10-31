@@ -81,3 +81,48 @@ th {
     background-color: maroon;
     color: #fff5e6;
 }
+.view-section {
+  background: url("yourimage.jpg") no-repeat center center/cover;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.card {
+  background-color: rgba(255, 248, 245, 0.95); /* light cream overlay */
+  border: 1px solid #800000;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 280px;
+  color: #2c2c2c;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+}
+
+button,
+a.btn {
+  background-color: #800000;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover,
+a.btn:hover {
+  background-color: #a83232;
+}
