@@ -1,77 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register Receiver - BloodConnect</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Receiver</title>
 </head>
 <body>
-  <nav>
-    <h1>BloodConnect</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="register.html">Register Donor</a></li>
-      <li><a href="receiver.html" class="active">Register Receiver</a></li>
-      <li><a href="view.html">View</a></li>
-    </ul>
-  </nav>
+  <h2>Register Receiver</h2>
+  <form id="receiverForm">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" required><br><br>
 
-  <section class="register-section">
-    <h2>Register as a Receiver</h2>
-    <form id="receiverForm">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="text" id="bloodGroup" placeholder="Required Blood Group" required />
-      <input type="text" id="city" placeholder="City" required />
-      <input type="text" id="contact" placeholder="Contact Number" required />
-      <button type="submit">Register</button>
-    </form>
-  </section>
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" required><br><br>
 
-  <footer>
-    <p>© 2025 BloodConnect</p>
-  </footer>
+    <label for="phone">Phone:</label><br>
+    <input type="text" id="phone" required><br><br>
 
-  <!-- Firebase: Save receiver data -->
+    <label for="blood">Required Blood Group:</label><br>
+    <input type="text" id="blood" required><br><br>
+
+    <label for="location">Location:</label><br>
+    <input type="text" id="location" required><br><br>
+
+    <button type="submit">Register</button>
+  </form>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-      authDomain: "vac-ass.firebaseapp.com",
-      projectId: "vac-ass",
-      storageBucket: "vac-ass.firebasestorage.app",
-      messagingSenderId: "161511658313",
-      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-      measurementId: "G-QSG2BEQN6J"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     const form = document.getElementById("receiverForm");
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = document.getElementById("name").value;
-      const bloodGroup = document.getElementById("bloodGroup").value;
-      const city = document.getElementById("city").value;
-      const contact = document.getElementById("contact").value;
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const blood = document.getElementById("blood").value.trim();
+      const location = document.getElementById("location").value.trim();
 
       try {
         await addDoc(collection(db, "receivers"), {
           name,
-          bloodGroup,
-          city,
-          contact,
-          timestamp: new Date()
+          email,
+          phone,
+          blood,
+          location
         });
-        alert("✅ Receiver registered successfully!");
+        alert("Receiver registered successfully!");
         form.reset();
       } catch (error) {
-        console.error("Error saving receiver:", error);
-        alert("❌ Failed to save data.");
+        console.error("Error adding receiver:", error);
+        alert("Error adding receiver. Check console.");
       }
     });
   </script>
