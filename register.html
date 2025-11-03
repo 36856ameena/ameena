@@ -1,56 +1,68 @@
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Donor</title>
+</head>
+<body>
+  <h2>Register Donor</h2>
+  <form id="registerForm">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" required><br><br>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-    authDomain: "vac-ass.firebaseapp.com",
-    projectId: "vac-ass",
-    storageBucket: "vac-ass.firebasestorage.app",
-    messagingSenderId: "161511658313",
-    appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-    measurementId: "G-QSG2BEQN6J"
-  };
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" required><br><br>
 
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const db = getFirestore(app);
+    <label for="phone">Phone:</label><br>
+    <input type="text" id="phone" required><br><br>
 
-  const form = document.getElementById("registerForm");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    <label for="blood">Blood Group:</label><br>
+    <input type="text" id="blood" required><br><br>
 
-    const name = document.getElementById("name").value.trim();
-    const age = document.getElementById("age").value.trim();
-    const bloodGroup = document.getElementById("bloodGroup").value.trim();
-    const city = document.getElementById("city").value.trim();
-    const contact = document.getElementById("contact").value.trim();
-    const role = document.getElementById("role").value;
+    <button type="submit">Register</button>
+  </form>
 
-    if (!name || !age || !bloodGroup || !city || !contact || !role) {
-      document.getElementById("message").textContent = "Please fill all fields.";
-      return;
-    }
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
-    // choose the correct collection
-    const collectionName = role === "Donor" ? "donors" : "receivers";
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
 
-    try {
-      await addDoc(collection(db, collectionName), {
-        name,
-        age,
-        bloodGroup,
-        city,
-        contact,
-        role,
-        timestamp: serverTimestamp()
-      });
-      document.getElementById("message").textContent = `${role} registered successfully!`;
-      form.reset();
-    } catch (err) {
-      console.error(err);
-      document.getElementById("message").textContent = "Error saving data.";
-    }
-  });
-</script>
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const form = document.getElementById("registerForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const blood = document.getElementById("blood").value.trim();
+
+      try {
+        await addDoc(collection(db, "donors"), {
+          name,
+          email,
+          phone,
+          blood
+        });
+        alert("Donor registered successfully!");
+        form.reset();
+      } catch (error) {
+        console.error("Error adding donor:", error);
+        alert("Error adding donor. Check console.");
+      }
+    });
+  </script>
+</body>
+</html>
