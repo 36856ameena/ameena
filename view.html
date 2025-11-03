@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>View Donors - BloodConnect</title>
+  <title>View Donors & Receivers - BloodConnect</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,14 +12,18 @@
     <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="register.html">Register</a></li>
-      <li><a href="view.html" class="active">View Donors</a></li>
+      <li><a href="view.html" class="active">View Donors & Receivers</a></li>
     </ul>
   </nav>
 
   <section class="view-section">
     <h2>Available Donors</h2>
-    <input type="text" id="searchCity" placeholder="Search by City..." />
-    <div id="dataContainer" class="card-container"></div>
+    <input type="text" id="searchDonorCity" placeholder="Search Donors by City..." />
+    <div id="donorContainer" class="card-container"></div>
+
+    <h2>Available Receivers</h2>
+    <input type="text" id="searchReceiverCity" placeholder="Search Receivers by City..." />
+    <div id="receiverContainer" class="card-container"></div>
   </section>
 
   <footer>
@@ -43,44 +47,48 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const container = document.getElementById("dataContainer");
-    const search = document.getElementById("searchCity");
+    const donorContainer = document.getElementById("donorContainer");
+    const receiverContainer = document.getElementById("receiverContainer");
+    const searchDonor = document.getElementById("searchDonorCity");
+    const searchReceiver = document.getElementById("searchReceiverCity");
 
-    async function loadDonors(filterCity = "") {
+    async function loadData(collectionName, container, filterCity = "") {
       container.innerHTML = "";
       try {
-        const snapshot = await getDocs(collection(db, "donors"));
+        const snapshot = await getDocs(collection(db, collectionName));
         const allData = snapshot.docs.map(doc => doc.data());
-        const donors = allData.filter(d => d.role === "Donor");
-        const filtered = donors.filter(d =>
+        const filtered = allData.filter(d =>
           !filterCity || (d.city && d.city.toLowerCase().includes(filterCity.toLowerCase()))
         );
 
         if (filtered.length === 0) {
-          container.innerHTML = "<p>No donors found.</p>";
+          container.innerHTML = `<p>No ${collectionName} found.</p>`;
           return;
         }
 
-        filtered.forEach(donor => {
+        filtered.forEach(person => {
           const card = document.createElement("div");
           card.classList.add("card");
           card.innerHTML = `
-            <h3>${donor.name}</h3>
-            <p><b>Blood Group:</b> ${donor.bloodGroup}</p>
-            <p><b>Age:</b> ${donor.age}</p>
-            <p><b>City:</b> ${donor.city}</p>
-            <p><b>Contact:</b> ${donor.contact}</p>
+            <h3>${person.name}</h3>
+            <p><b>Blood Group:</b> ${person.bloodGroup}</p>
+            <p><b>Age:</b> ${person.age}</p>
+            <p><b>City:</b> ${person.city}</p>
+            <p><b>Contact:</b> ${person.contact}</p>
           `;
           container.appendChild(card);
         });
       } catch (err) {
         console.error(err);
-        container.innerHTML = "<p>Error loading donors.</p>";
+        container.innerHTML = `<p>Error loading ${collectionName}.</p>`;
       }
     }
 
-    search.addEventListener("input", () => loadDonors(search.value));
-    loadDonors();
+    searchDonor.addEventListener("input", () => loadData("donors", donorContainer, searchDonor.value));
+    searchReceiver.addEventListener("input", () => loadData("receivers", receiverContainer, searchReceiver.value));
+
+    loadData("donors", donorContainer);
+    loadData("receivers", receiverContainer);
   </script>
 </body>
 </html>
