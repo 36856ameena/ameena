@@ -1,168 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>View Donors & Receivers - BloodConnect</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 40px;
-      padding: 20px;
-    }
-    .section {
-      width: 90%;
-      max-width: 800px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 20px;
-      background: #fafafa;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .search-bar {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .card-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-    .card {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 15px;
-      background: white;
-    }
-  </style>
-</head>
-<body>
-  <nav>
-    <h1>BloodConnect</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="register.html">Register</a></li>
-      <li><a href="receiver.html">Receiver Register</a></li>
-      <li><a href="view.html" class="active">View Donors & Receivers</a></li>
-    </ul>
-  </nav>
-
-  <div class="container">
-    <div class="section">
-      <h2>Available Donors</h2>
-      <div class="search-bar">
-        <input type="text" id="searchDonor" placeholder="Search Donors by City...">
-      </div>
-      <div id="donorContainer" class="card-container"></div>
-    </div>
-
-    <div class="section">
-      <h2>Registered Receivers</h2>
-      <div class="search-bar">
-        <input type="text" id="searchReceiver" placeholder="Search Receivers by City...">
-      </div>
-      <div id="receiverContainer" class="card-container"></div>
-    </div>
-  </div>
-
-  <footer>
-    <p>© 2025 BloodConnect</p>
-  </footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
-      authDomain: "vac-ass.firebaseapp.com",
-      projectId: "vac-ass",
-      storageBucket: "vac-ass.firebasestorage.app",
-      messagingSenderId: "161511658313",
-      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
-      measurementId: "G-QSG2BEQN6J"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const donorContainer = document.getElementById("donorContainer");
-    const receiverContainer = document.getElementById("receiverContainer");
-    const searchDonor = document.getElementById("searchDonor");
-    const searchReceiver = document.getElementById("searchReceiver");
-
-    async function loadDonors(filter = "") {
-      donorContainer.innerHTML = "";
-      try {
-        const snapshot = await getDocs(collection(db, "donors"));
-        const donors = snapshot.docs.map(doc => doc.data());
-        const filtered = donors.filter(d => !filter || (d.city && d.city.toLowerCase().includes(filter.toLowerCase())));
-
-        if (filtered.length === 0) {
-          donorContainer.innerHTML = "<p>No donors found.</p>";
-          return;
-        }
-
-        filtered.forEach(donor => {
-          const card = document.createElement("div");
-          card.classList.add("card");
-          card.innerHTML = `
-            <h3>${donor.name}</h3>
-            <p><b>Blood Group:</b> ${donor.bloodGroup}</p>
-            <p><b>Age:</b> ${donor.age}</p>
-            <p><b>City:</b> ${donor.city}</p>
-            <p><b>Contact:</b> ${donor.contact}</p>
-          `;
-          donorContainer.appendChild(card);
-        });
-      } catch (err) {
-        donorContainer.innerHTML = "<p>Error loading donors.</p>";
-        console.error(err);
-      }
-    }
-
-    async function loadReceivers(filter = "") {
-      receiverContainer.innerHTML = "";
-      try {
-        const snapshot = await getDocs(collection(db, "receivers"));
-        const receivers = snapshot.docs.map(doc => doc.data());
-        const filtered = receivers.filter(r => !filter || (r.location && r.location.toLowerCase().includes(filter.toLowerCase())));
-
-        if (filtered.length === 0) {
-          receiverContainer.innerHTML = "<p>No receivers found.</p>";
-          return;
-        }
-
-        filtered.forEach(receiver => {
-          const card = document.createElement("div");
-          card.classList.add("card");
-          card.innerHTML = `
-            <h3>${receiver.name}</h3>
-            <p><b>Age:</b> ${receiver.age}</p>
-            <p><b>Blood Needed:</b> ${receiver.blood}</p>
-            <p><b>Location:</b> ${receiver.location}</p>
-            <p><b>Phone:</b> ${receiver.phone}</p>
-          `;
-          receiverContainer.appendChild(card);
-        });
-      } catch (err) {
-        receiverContainer.innerHTML = "<p>Error loading receivers.</p>";
-        console.error(err);
-      }
-    }
-
-    searchDonor.addEventListener("input", () => loadDonors(searchDonor.value));
-    searchReceiver.addEventListener("input", () => loadReceivers(searchReceiver.value));
-
-    loadDonors();
-    loadReceivers();
-  </script>
-</body>
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+  <meta charset="UTF-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+  <title>View Donors & Receivers - BloodConnect</title>  
+  <link rel="stylesheet" href="style.css" />  
+  <style>  
+    .container {  
+      display: flex;  
+      flex-direction: column;  
+      align-items: center;  
+      gap: 40px;  
+      padding: 20px;  
+    }  
+    .section {  
+      width: 90%;  
+      max-width: 800px;  
+      border: 1px solid #ccc;  
+      border-radius: 10px;  
+      padding: 20px;  
+      background: #fafafa;  
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);  
+    }  
+    h2 {  
+      text-align: center;  
+      margin-bottom: 10px;  
+    }  
+    .search-bar {  
+      text-align: center;  
+      margin-bottom: 15px;  
+    }  
+    .card-container {  
+      display: grid;  
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));  
+      gap: 15px;  
+    }  
+    .card {  
+      border: 1px solid #ccc;  
+      border-radius: 10px;  
+      padding: 15px;  
+      background: white;  
+    }  
+  </style>  
+</head>  
+<body>  
+  <nav>  
+    <h1>BloodConnect</h1>  
+    <ul>  
+      <li><a href="index.html">Home</a></li>  
+      <li><a href="register.html">Donor Register</a></li>  
+      <li><a href="receiver.html">Receiver Register</a></li>  
+      <li><a href="view.html" class="active">View Donors & Receivers</a></li>  
+    </ul>  
+  </nav>  
+  
+  <div class="container">  
+    <!-- DONORS SECTION -->  
+    <div class="section">  
+      <h2>Available Donors</h2>  
+      <div class="search-bar">  
+        <input type="text" id="searchDonor" placeholder="Search Donors by City...">  
+      </div>  
+      <div id="donorContainer" class="card-container"></div>  
+    </div>  
+  
+    <!-- RECEIVERS SECTION -->  
+    <div class="section">  
+      <h2>Registered Receivers</h2>  
+      <div class="search-bar">  
+        <input type="text" id="searchReceiver" placeholder="Search Receivers by City...">  
+      </div>  
+      <div id="receiverContainer" class="card-container"></div>  
+    </div>  
+  </div>  
+  
+  <footer>  
+    <p>© 2025 BloodConnect</p>  
+  </footer>  
+  
+  <script type="module">  
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";  
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";  
+  
+    const firebaseConfig = {  
+      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",  
+      authDomain: "vac-ass.firebaseapp.com",  
+      projectId: "vac-ass",  
+      storageBucket: "vac-ass.firebasestorage.app",  
+      messagingSenderId: "161511658313",  
+      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",  
+      measurementId: "G-QSG2BEQN6J"  
+    };  
+  
+    const app = initializeApp(firebaseConfig);  
+    const db = getFirestore(app);  
+  
+    const donorContainer = document.getElementById("donorContainer");  
+    const receiverContainer = document.getElementById("receiverContainer");  
+    const searchDonor = document.getElementById("searchDonor");  
+    const searchReceiver = document.getElementById("searchReceiver");  
+  
+    // LOAD DONORS  
+    async function loadDonors(filter = "") {  
+      donorContainer.innerHTML = "";  
+      try {  
+        const snapshot = await getDocs(collection(db, "donors"));  
+        const donors = snapshot.docs.map(doc => doc.data());  
+        const filtered = donors.filter(d => !filter || (d.city && d.city.toLowerCase().includes(filter.toLowerCase())));  
+  
+        if (filtered.length === 0) {  
+          donorContainer.innerHTML = "<p>No donors found.</p>";  
+          return;  
+        }  
+  
+        filtered.forEach(donor => {  
+          const card = document.createElement("div");  
+          card.classList.add("card");  
+          card.innerHTML = `  
+            <h3>${donor.name}</h3>  
+            <p><b>Blood Group:</b> ${donor.bloodGroup}</p>  
+            <p><b>Age:</b> ${donor.age}</p>  
+            <p><b>City:</b> ${donor.city}</p>  
+            <p><b>Contact:</b> ${donor.contact}</p>  
+          `;  
+          donorContainer.appendChild(card);  
+        });  
+      } catch (err) {  
+        donorContainer.innerHTML = "<p>Error loading donors.</p>";  
+        console.error(err);  
+      }  
+    }  
+  
+    // LOAD RECEIVERS  
+    async function loadReceivers(filter = "") {  
+      receiverContainer.innerHTML = "";  
+      try {  
+        const snapshot = await getDocs(collection(db, "receivers"));  
+        const receivers = snapshot.docs.map(doc => doc.data());  
+        const filtered = receivers.filter(r => !filter || (r.location && r.location.toLowerCase().includes(filter.toLowerCase())));  
+  
+        if (filtered.length === 0) {  
+          receiverContainer.innerHTML = "<p>No receivers found.</p>";  
+          return;  
+        }  
+  
+        filtered.forEach(receiver => {  
+          const card = document.createElement("div");  
+          card.classList.add("card");  
+          card.innerHTML = `  
+            <h3>${receiver.name}</h3>  
+            <p><b>Age:</b> ${receiver.age}</p>  
+            <p><b>Blood Needed:</b> ${receiver.blood}</p>  
+            <p><b>Location:</b> ${receiver.location}</p>  
+            <p><b>Phone:</b> ${receiver.phone}</p>  
+          `;  
+          receiverContainer.appendChild(card);  
+        });  
+      } catch (err) {  
+        receiverContainer.innerHTML = "<p>Error loading receivers.</p>";  
+        console.error(err);  
+      }  
+    }  
+  
+    // Search + Load  
+    searchDonor.addEventListener("input", () => loadDonors(searchDonor.value));  
+    searchReceiver.addEventListener("input", () => loadReceivers(searchReceiver.value));  
+  
+    loadDonors();  
+    loadReceivers();  
+  </script>  
+</body>  
 </html>
