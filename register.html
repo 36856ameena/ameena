@@ -3,24 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register Donor</title>
+  <title>Register - BloodConnect</title>
 </head>
 <body>
-  <h2>Register Donor</h2>
+  <h2>Register as Donor or Receiver</h2>
+
   <form id="registerForm">
-    <label for="name">Name:</label><br>
+    <label>Name:</label><br>
     <input type="text" id="name" required><br><br>
 
-    <label for="email">Email:</label><br>
-    <input type="email" id="email" required><br><br>
+    <label>Age:</label><br>
+    <input type="number" id="age" required><br><br>
 
-    <label for="phone">Phone:</label><br>
+    <label>Phone:</label><br>
     <input type="text" id="phone" required><br><br>
 
-    <label for="blood">Blood Group:</label><br>
+    <label>Blood Group:</label><br>
     <input type="text" id="blood" required><br><br>
 
-    <button type="submit">Register</button>
+    <label>City:</label><br>
+    <input type="text" id="city" required><br><br>
+
+    <label>Role:</label><br>
+    <select id="role" required>
+      <option value="">Select Role</option>
+      <option value="Donor">Donor</option>
+      <option value="Receiver">Receiver</option>
+    </select><br><br>
+
+    <button type="submit">Submit</button>
   </form>
 
   <script type="module">
@@ -28,12 +39,13 @@
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
+      authDomain: "vac-ass.firebaseapp.com",
+      projectId: "vac-ass",
+      storageBucket: "vac-ass.firebasestorage.app",
+      messagingSenderId: "161511658313",
+      appId: "1:161511658313:web:a3ffe1c54c72e97a84c098",
+      measurementId: "G-QSG2BEQN6J"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -45,22 +57,32 @@
       e.preventDefault();
 
       const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
+      const age = document.getElementById("age").value.trim();
       const phone = document.getElementById("phone").value.trim();
       const blood = document.getElementById("blood").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const role = document.getElementById("role").value;
+
+      if (!role) {
+        alert("Please select a role.");
+        return;
+      }
 
       try {
-        await addDoc(collection(db, "donors"), {
+        const collectionName = role === "Donor" ? "donors" : "receivers";
+        await addDoc(collection(db, collectionName), {
           name,
-          email,
+          age,
           phone,
-          blood
+          blood,
+          city,
+          role
         });
-        alert("Donor registered successfully!");
+        alert(`${role} registered successfully!`);
         form.reset();
       } catch (error) {
-        console.error("Error adding donor:", error);
-        alert("Error adding donor. Check console.");
+        console.error("Error adding record:", error);
+        alert("Error saving data. Check console.");
       }
     });
   </script>
