@@ -1,38 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>View Donors & Receivers - BloodConnect</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - BloodConnect</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <nav>
+  <header>
     <h1>BloodConnect</h1>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="register.html">Register</a></li>
-      <li><a href="view.html" class="active">View Donors & Receivers</a></li>
-    </ul>
+  </header>
+
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="register.html" class="active">Register</a>
+    <a href="view.html">View Donors & Receivers</a>
   </nav>
 
-  <section class="view-section">
-    <h2>Available Donors</h2>
-    <input type="text" id="searchDonorCity" placeholder="Search Donors by City..." />
-    <div id="donorContainer" class="card-container"></div>
-
-    <h2>Available Receivers</h2>
-    <input type="text" id="searchReceiverCity" placeholder="Search Receivers by City..." />
-    <div id="receiverContainer" class="card-container"></div>
-  </section>
+  <main>
+    <section class="form-section">
+      <h2>Register as Donor or Receiver</h2>
+      <form id="registerForm">
+        <input type="text" id="name" placeholder="Full Name" required>
+        <input type="number" id="age" placeholder="Age" required>
+        <input type="text" id="bloodGroup" placeholder="Blood Group (A+, O-, etc)" required>
+        <input type="text" id="city" placeholder="City" required>
+        <input type="text" id="contact" placeholder="Contact Number" required>
+        <select id="role" required>
+          <option value="">Select Role</option>
+          <option value="Donor">Donor</option>
+          <option value="Receiver">Receiver</option>
+        </select>
+        <button type="submit">Submit</button>
+      </form>
+      <p id="message"></p>
+    </section>
+  </main>
 
   <footer>
     <p>© 2025 BloodConnect</p>
   </footer>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCdbl9d34M_AIwE83k-2xEAnw_DLQhYm4U",
@@ -47,48 +58,34 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const donorContainer = document.getElementById("donorContainer");
-    const receiverContainer = document.getElementById("receiverContainer");
-    const searchDonor = document.getElementById("searchDonorCity");
-    const searchReceiver = document.getElementById("searchReceiverCity");
+    const form = document.getElementById("registerForm");
+    const msg = document.getElementById("message");
 
-    async function loadData(collectionName, container, filterCity = "") {
-      container.innerHTML = "";
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const user = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        bloodGroup: document.getElementById("bloodGroup").value,
+        city: document.getElementById("city").value,
+        contact: document.getElementById("contact").value,
+        role: document.getElementById("role").value,
+        timestamp: serverTimestamp()
+      };
+
       try {
-        const snapshot = await getDocs(collection(db, collectionName));
-        const allData = snapshot.docs.map(doc => doc.data());
-        const filtered = allData.filter(d =>
-          !filterCity || (d.city && d.city.toLowerCase().includes(filterCity.toLowerCase()))
-        );
-
-        if (filtered.length === 0) {
-          container.innerHTML = `<p>No ${collectionName} found.</p>`;
-          return;
-        }
-
-        filtered.forEach(person => {
-          const card = document.createElement("div");
-          card.classList.add("card");
-          card.innerHTML = `
-            <h3>${person.name}</h3>
-            <p><b>Blood Group:</b> ${person.bloodGroup}</p>
-            <p><b>Age:</b> ${person.age}</p>
-            <p><b>City:</b> ${person.city}</p>
-            <p><b>Contact:</b> ${person.contact}</p>
-          `;
-          container.appendChild(card);
-        });
+        const targetCollection = user.role === "Donor" ? "donors" : "receivers";
+        await addDoc(collection(db, targetCollection), user);
+        msg.textContent = "Registered successfully!";
+        msg.style.color = "green";
+        form.reset();
       } catch (err) {
         console.error(err);
-        container.innerHTML = `<p>Error loading ${collectionName}.</p>`;
+        msg.textContent = "Error saving data.";
+        msg.style.color = "red";
       }
-    }
-
-    searchDonor.addEventListener("input", () => loadData("donors", donorContainer, searchDonor.value));
-    searchReceiver.addEventListener("input", () => loadData("receivers", receiverContainer, searchReceiver.value));
-
-    loadData("donors", donorContainer);
-    loadData("receivers", receiverContainer);
+    });
   </script>
 </body>
 </html>
